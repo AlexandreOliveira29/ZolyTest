@@ -8,6 +8,7 @@ class DeveloperEffort {
   frontDevArray = [];
   backDevArray = [];
   frontNumber = 0;
+  backNumber = 0;
 
   effortArray = [];
   effortFrontArray = [];
@@ -18,6 +19,7 @@ class DeveloperEffort {
     this.frontDevArray = validateArrayItensInteger(frontDevArray, "Frontend");
     this.backDevArray = validateArrayItensInteger(backDevArray, "Backend");
     this.frontNumber = validateFrontendNumber(frontNumber);
+    this.backNumber = this.frontDevArray.length - this.frontNumber;
 
     this._validateArrayEqualsSize();
   }
@@ -28,36 +30,42 @@ class DeveloperEffort {
     }
   }
 
-  effort() {
-    const backNumber = this.frontDevArray.length - this.frontNumber;
-    this.frontDevArray.forEach((item, key) => {
-      const backItem = this.backDevArray[key];
+  _distributesFrontEquals() {
+    if (
+      this.effortEqualsArray.length > 0 &&
+      this.effortFrontArray.length < this.frontNumber
+    ) {
+      const newEffortFrontArray = [];
 
-      if (item > backItem && this.effortFrontArray.length < this.frontNumber) {
-        this.effortFrontArray.push({ key, value: item, area: "Frontend" });
-      } else if (item === backItem) {
-        this.effortEqualsArray.push({ key, value: item });
-      } else {
-        if (this.effortBackArray.length < backNumber) {
-          this.effortBackArray.push({ key, value: backItem, area: "Backend" });
-        } else {
-          this.effortFrontArray.push({ key, value: item, area: "Frontend" });
+      for (let index = 0; index < this.frontNumber; index++) {
+        const item = this.effortEqualsArray[index];
+        if (item) {
+          newEffortFrontArray.push({ ...item, area: "Frontend" });
         }
       }
-    });
-
-    if (this.effortFrontArray.length < this.frontNumber) {
-      this.effortFrontArray.push(
-        ...this.effortEqualsArray.map((item) => ({ ...item, area: "Frontend" }))
-      );
+      this.effortEqualsArray.splice(0, this.frontNumber);
+      this.effortFrontArray.push(...newEffortFrontArray);
     }
-    if (this.effortBackArray.length < backNumber) {
-      this.effortBackArray.push(
-        ...this.effortEqualsArray.map((item) => ({ ...item, area: "Backend" }))
-      );
-    }
+  }
+  _distributesBackEquals() {
+    if (
+      this.effortEqualsArray.length > 0 &&
+      this.effortBackArray.length < this.backNumber
+    ) {
+      const newEffortBackArray = [];
 
-    this.effortEqualsArray = [];
+      for (let index = 0; index < this.backNumber; index++) {
+        const item = this.effortEqualsArray[index];
+        if (item) {
+          newEffortBackArray.push({ ...item, area: "Backend" });
+        }
+      }
+      this.effortEqualsArray.splice(0, this.backNumber);
+      this.effortBackArray.push(...newEffortBackArray);
+    }
+  }
+
+  _sanitizeEfforts() {
     const newEffortArray = [];
 
     this.effortFrontArray.forEach(
@@ -68,6 +76,28 @@ class DeveloperEffort {
     );
 
     this.effortArray.push(...newEffortArray);
+  }
+
+  effort() {
+    this.frontDevArray.forEach((item, key) => {
+      const backItem = this.backDevArray[key];
+
+      if (item > backItem && this.effortFrontArray.length < this.frontNumber) {
+        this.effortFrontArray.push({ key, value: item, area: "Frontend" });
+      } else if (item === backItem) {
+        this.effortEqualsArray.push({ key, value: item });
+      } else {
+        if (this.effortBackArray.length < this.backNumber) {
+          this.effortBackArray.push({ key, value: backItem, area: "Backend" });
+        } else {
+          this.effortFrontArray.push({ key, value: item, area: "Frontend" });
+        }
+      }
+    });
+
+    this._distributesFrontEquals();
+    this._distributesBackEquals();
+    this._sanitizeEfforts();
 
     return this.effortArray;
   }
