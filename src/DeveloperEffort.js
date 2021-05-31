@@ -34,26 +34,26 @@ class DeveloperEffort {
       const backItem = this.backDevArray[key];
 
       if (item > backItem && this.effortFrontArray.length < this.frontNumber) {
-        this.effortFrontArray.push({ key, value: item, area: "front" });
+        this.effortFrontArray.push({ key, value: item, area: "Frontend" });
       } else if (item === backItem) {
         this.effortEqualsArray.push({ key, value: item });
       } else {
         if (this.effortBackArray.length < backNumber) {
-          this.effortBackArray.push({ key, value: backItem, area: "back" });
+          this.effortBackArray.push({ key, value: backItem, area: "Backend" });
         } else {
-          this.effortFrontArray.push({ key, value: item, area: "front" });
+          this.effortFrontArray.push({ key, value: item, area: "Frontend" });
         }
       }
     });
 
     if (this.effortFrontArray.length < this.frontNumber) {
       this.effortFrontArray.push(
-        ...this.effortEqualsArray.map((item) => ({ ...item, area: "front" }))
+        ...this.effortEqualsArray.map((item) => ({ ...item, area: "Frontend" }))
       );
     }
     if (this.effortBackArray.length < backNumber) {
       this.effortBackArray.push(
-        ...this.effortEqualsArray.map((item) => ({ ...item, area: "back" }))
+        ...this.effortEqualsArray.map((item) => ({ ...item, area: "Backend" }))
       );
     }
 

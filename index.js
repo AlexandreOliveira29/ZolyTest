@@ -9,7 +9,7 @@ function init() {
     const effortInstance = new DeveloperEffort(front, back, f);
     effortInstance.effort();
     console.log("Soma do esforço do time é:", effortInstance.effortSum());
-    console.log(effortInstance.getDevActuation());
+    console.log(effortInstance.getDevActuation().join("\r\n"));
   } catch (error) {
     console.error(error);
   }
